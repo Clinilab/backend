@@ -10,13 +10,8 @@ RUN apt-get update && apt-get install -y \
 # Activar mod_rewrite de Apache
 RUN a2enmod rewrite
 
-# Configurar Apache para servir en /backend/
-RUN echo "Alias /backend/ /var/www/html/public/\n\
-    <Directory /var/www/html/public>\n\
-    AllowOverride All\n\
-    Require all granted\n\
-    </Directory>" > /etc/apache2/conf-available/backend.conf && \
-    a2enconf backend
+# Cambiar DocumentRoot a /public
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf
 
 # Copiar composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
