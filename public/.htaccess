@@ -1,15 +1,20 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Redirigir la raíz al frontend (index.html)
-    RewriteRule ^$ /frontend/index.html [L]
-
-    # Redirigir todo lo que no sea un archivo o directorio a index.php (Symfony)
+    # Redirigir todo a index.php si no existe archivo o directorio
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
 
-    # Si el path comienza con "frontend/", no redirigir a index.php
-    RewriteCond %{REQUEST_URI} !^/frontend/
+<IfModule mod_headers.c>
+    Header always set Access-Control-Allow-Origin "https://frontend-lcaz.onrender.com"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
 
-    RewriteRule ^(.*)$ index.php [QSA,L]
+# Soporte para OPTIONS preflight
+<IfModule mod_rewrite.c>
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^(.*)$ $1 [R=200,L]
 </IfModule>
